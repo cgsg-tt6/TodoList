@@ -5,10 +5,18 @@
  */
 package org.example.managers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.example.task.Task;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -18,10 +26,13 @@ import java.util.Scanner;
  */
 public class CommandManager {
     private final Scanner sc;
-    Writer wr = new Writer();
-    InputManager im = new InputManager();
-    Map<Integer, Task> tasks = new HashMap<>();
-    int lastId = 0;
+    private final Writer wr = new Writer();
+    private final InputManager im = new InputManager();
+    private Map<Integer, Task> tasks = new HashMap<>();
+    private int lastId = 0;
+    private final ObjectMapper mapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
     public CommandManager() {
         this.sc = new Scanner(System.in);
@@ -65,4 +76,36 @@ public class CommandManager {
         wr.write("Exit...", true);
         System.exit(0);
     }
+
+    public void save() {
+        //wr.write("Input path to file: ", false);
+        String path = "C:\\Z\\work\\coding\\Todo-List\\src\\main\\resources\\out.json";
+        try (BufferedWriter output = new BufferedWriter(new FileWriter(path))) {
+            String json = mapper
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(tasks);
+            output.write(json);
+            wr.write("Data saved. (src\\main\\resources\\out.json)\n", true);
+        }
+        catch (IOException e) {
+            //e.printStackTrace();
+            wr.write("Save: incorrect path.\n", true);
+            //save();
+        }
+    }
+
+    public void load() {
+        String path = "C:\\Z\\work\\coding\\Todo-List\\src\\main\\resources\\out.json";
+        HashMap<Integer, Task> taskHashMap = new HashMap<>();
+        try {
+            TypeReference<HashMap<Integer, Task>> typeRef = new TypeReference<>() {};
+            tasks = mapper.readValue(Paths.get(path).toFile(), typeRef);
+            wr.write("Collection loaded.\n", true);
+            show();
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+            wr.write("Load : incorrect path.\n", true);
+        }
+    }
+
 }

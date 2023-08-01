@@ -16,9 +16,6 @@ import java.util.Scanner;
  */
 public class Client {
 
-    // TODO write read.me and maybe todo-list.
-    // TODO save to json.
-    // TODO write scripts and test.
     public static void main(String[] args) {
         Client client = new Client();
         client.run(new Scanner(System.in));
@@ -26,17 +23,9 @@ public class Client {
     public void run(Scanner sc) {
         Writer wr = new Writer();
         CommandManager cm = new CommandManager(sc);
+        cm.load();
 
-        /* TODO
-         *  save
-         *  done, delete
-         *  edit
-         *  history
-         *  sort
-         *  filter
-         */
         String command;
-
         while (true) {
             wr.write("Input command name:", false);
             command = sc.nextLine();

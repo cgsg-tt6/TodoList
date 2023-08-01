@@ -5,10 +5,12 @@
  */
 package org.example.task;
 
+import java.io.Serializable;
+
 /**
  * Enum with different priorities.
  */
-public enum Priority {
+public enum Priority implements Serializable {
     HIGH,
     MEDIUM,
     LOW,

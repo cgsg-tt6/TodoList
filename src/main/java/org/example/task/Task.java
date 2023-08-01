@@ -5,13 +5,14 @@
  */
 package org.example.task;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.function.Function;
 
 import static org.example.task.Priority.*;
 
-public class Task {
+public class Task implements Serializable {
     private int id; // not null
     private String name; // not null
     private String description;
@@ -27,6 +28,10 @@ public class Task {
         return "name: " + name + "\ndescription: " + notNull.apply(description) + "\npriority: " + priorToString.apply(priority) +
                 "\ntime to complete: " + notNull.apply(timeToComplete) + "\ncreation date: " + creationDate +
                 "\ndue date: " + notNull.apply(dueDate) + "\n";
+    }
+
+    public Task() {
+        this("");
     }
 
     public Task(String name) {
